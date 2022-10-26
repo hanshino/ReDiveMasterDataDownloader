@@ -10,7 +10,7 @@ from logging.handlers import RotatingFileHandler
 
 script_dir = os.path.dirname(__file__)
 
-HEADER = {"User-Agent": "Dalvik/2.1.0 (Linux; U; Android 10; Pixel 3 XL Build/QQ3A.200805.001)"}
+HEADER = {"User-Agent": "Mozilla/5.0 (iPad; CPU OS 9_3_5 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Mobile/13G36"}
 
 GENERATE_DIFF = os.path.exists(os.path.join(script_dir, "sqldiff.exe"))
 
@@ -20,9 +20,12 @@ def get(truthVersion: str = None):
 
     # Download the database if TruthVersion is exist
     r = requests.get(
-        f"https://img-pc.so-net.tw/dl/Resources/{truthVersion}/Jpn/AssetBundles/Android/manifest/masterdata_assetmanifest",
+        f"https://img-pc.so-net.tw/dl/Resources/{truthVersion}/Jpn/AssetBundles/iOS/manifest/masterdata2_assetmanifest",
         headers=HEADER,
     )
+
+    logging.info(f"Downloading manifest file... {truthVersion}")
+    logging.info(f"https://img-pc.so-net.tw/dl/Resources/{truthVersion}/Jpn/AssetBundles/iOS/manifest/masterdata2_assetmanifest")
 
     if r.status_code != 200:
         logging.info(f"TruthVersion {truthVersion} is not exist")
@@ -31,7 +34,9 @@ def get(truthVersion: str = None):
 
     filename, path, _, size, _ = r.text.split(",")
 
+    logging.info(f"response text {r.text}")
     logging.info(f"Downloading asset bundle ...")
+    logging.info(f"https://img-pc.so-net.tw/dl/pool/AssetBundles/{path[:2]}/{path}")
     r = requests.get(f"https://img-pc.so-net.tw/dl/pool/AssetBundles/{path[:2]}/{path}", headers=HEADER)
 
     if r.headers.get("Content-Length") != size:
